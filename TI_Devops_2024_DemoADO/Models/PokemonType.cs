@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TI_Devops_2024_DemoADO.Models
 {
-    public class Type
+    public class PokemonType
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;

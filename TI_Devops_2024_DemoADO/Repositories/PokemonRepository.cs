@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -32,6 +31,25 @@ namespace TI_Devops_2024_DemoADO.Repositories
                 Type1Id = (int)record["Type1Id"],
                 Type2Id = record["Type2Id"] == DBNull.Value ? null : (int)record["Type2Id"]
             };
+        }
+
+        public Pokemon ConvertFull(IDataRecord record)
+        {
+            Pokemon pokemon = Convert(record);
+            pokemon.Type1 = new PokemonType()
+            {
+                Id = (int)record["Type1Id"],
+                Name = (string)record["Type1Name"],
+            };
+            if (record["Type2Id"] != DBNull.Value)
+            {
+                pokemon.Type2 = new PokemonType()
+                {
+                    Id = (int)record["Type2Id"],
+                    Name = (string)record["Type2Name"]
+                };
+            }
+            return pokemon;
         }
 
         public IEnumerable<Pokemon> GetAll()
@@ -78,7 +96,7 @@ namespace TI_Devops_2024_DemoADO.Repositories
 
             if (reader.Read())
             {
-                pokemon = Convert(reader);
+                pokemon = ConvertFull(reader);
             }
 
             conn.Close();
