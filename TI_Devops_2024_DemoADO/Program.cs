@@ -1,6 +1,7 @@
 ﻿
 using System.Data.SqlClient;
 using System.Net;
+using TI_Devops_2024_DemoADO.Interfaces;
 using TI_Devops_2024_DemoADO.Models;
 
 string connectionString = @"server=BSTORM\SQLSERVER;database=PokemonDB;integrated security=true";
@@ -140,3 +141,4 @@ string connectionString = @"server=BSTORM\SQLSERVER;database=PokemonDB;integrate
 //}
 
 #endregion
+
