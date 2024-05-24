@@ -1,8 +1,10 @@
 ﻿
 using System.Data.SqlClient;
 using System.Net;
+using TI_Devops_2024_DemoADO;
 using TI_Devops_2024_DemoADO.Interfaces;
 using TI_Devops_2024_DemoADO.Models;
+using TI_Devops_2024_DemoADO.Repositories;
 
 string connectionString = @"server=BSTORM\SQLSERVER;database=PokemonDB;integrated security=true";
 
@@ -142,3 +144,67 @@ string connectionString = @"server=BSTORM\SQLSERVER;database=PokemonDB;integrate
 
 #endregion
 
+#region Test Repo
+
+IPokemonRepository pokemonRepository = new PokemonRepository(connectionString);
+
+List<Pokemon> pokemons = pokemonRepository.GetAll().ToList();
+int count = pokemonRepository.Count();
+Console.WriteLine($"Count = {count}");
+pokemons.ForEach(p => Console.WriteLine(p));
+
+Console.WriteLine("_______________________________________________________________________");
+
+Pokemon? pokemon = pokemonRepository.GetById(4);
+
+if(pokemon is not null)
+{
+    Console.WriteLine($"Name {pokemon.Name}\nType1 {pokemon.Type1?.Name}\nType2 {pokemon.Type2?.Name}");
+}
+
+Console.WriteLine("_______________________________________________________________________");
+
+Pokemon newPokemon = new Pokemon()
+{
+    Name = "Leviator",
+    Height = 50,
+    Weight = 100,
+    Description = "The GOAT",
+    Type1Id = 4,
+    Type2Id = 7
+};
+
+int newId = pokemonRepository.Create(newPokemon);
+
+Console.WriteLine($"Pokemon inséré avec id {newId}");
+
+Console.WriteLine("_______________________________________________________________________");
+
+Pokemon updatePokemon = new Pokemon()
+{
+    Name = "Magikarp",
+    Height = 10,
+    Weight = 2,
+    Description = "The real GOAT",
+    Type1Id = 4
+};
+
+if (pokemonRepository.Update(newId, updatePokemon))
+{
+    Console.WriteLine("OK");
+}
+else
+{
+    Console.WriteLine("KO");
+}
+
+if (pokemonRepository.Delete(newId))
+{
+    Console.WriteLine("Deleted");
+}
+
+#endregion
+
+RappelGenerique<Pokemon> r = new RappelGenerique<Pokemon>();
+
+r.execute(pokemon);

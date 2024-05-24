@@ -80,9 +80,9 @@ namespace TI_Devops_2024_DemoADO.Repositories
 
             cmd.CommandText = @"select p.* , t.Name as 'Type1Name', t2.Name as 'Type2Name'
                                 from Pokemon p 
-                                    join Type t 
+                                    left join Type t 
                                         on p.Type1Id = t.Id 
-                                    join Type t2 
+                                    left join Type t2 
                                         on p.Type2Id = t2.Id 
                                 where p.Id = @id";
 
@@ -122,19 +122,82 @@ namespace TI_Devops_2024_DemoADO.Repositories
             return count;
         }
 
-        public int Create(Pokemon pokemon)
+        public int Create(Pokemon p)
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            
+            SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"INSERT INTO Pokemon 
+                                OUTPUT INSERTED.Id
+                                VALUES (@name,@height,@weight,@description,@type1Id,@type2Id)";
+
+            cmd.Parameters.AddWithValue("@name",p.Name);
+            cmd.Parameters.AddWithValue("@height",p.Height);
+            cmd.Parameters.AddWithValue("@weight",p.Weight);
+            cmd.Parameters.AddWithValue("@description",p.Description is null ? DBNull.Value : p.Description);
+            cmd.Parameters.AddWithValue("@type1Id",p.Type1Id);
+            cmd.Parameters.AddWithValue("@type2Id",p.Type2Id is null ? DBNull.Value: p.Type2Id);
+
+            conn.Open();
+
+            int id = (int)cmd.ExecuteScalar();
+
+            conn.Close();
+
+            return id;
         }
 
-        public bool Update(int id, Pokemon pokemon)
+        public bool Update(int id, Pokemon p)
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+
+            SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"UPDATE Pokemon 
+                                SET Name = @name, 
+                                    Height = @height, 
+                                    Weight = @weight,
+                                    Description = @description,
+                                    Type1Id = @type1Id,
+                                    Type2Id = @type2Id 
+                                WHERE id = @id";
+
+            cmd.Parameters.AddWithValue("@name", p.Name);
+            cmd.Parameters.AddWithValue("@height", p.Height);
+            cmd.Parameters.AddWithValue("@weight", p.Weight);
+            cmd.Parameters.AddWithValue("@description", p.Description is null ? DBNull.Value : p.Description);
+            cmd.Parameters.AddWithValue("@type1Id", p.Type1Id);
+            cmd.Parameters.AddWithValue("@type2Id", p.Type2Id is null ? DBNull.Value : p.Type2Id);
+            cmd.Parameters.AddWithValue("@id",id);
+
+            conn.Open();
+
+            int nbRows = cmd.ExecuteNonQuery();
+
+            conn.Close();
+
+            return nbRows == 1;
         }
 
         public bool Delete(int id)
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            
+            SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"DELETE Pokemon 
+                                WHERE Id = @id";
+
+            cmd.Parameters.AddWithValue("@id", id);
+
+            conn.Open();
+
+            int nbRows = cmd.ExecuteNonQuery();
+
+            conn.Close();
+
+            return nbRows == 1;
         }
 
     }

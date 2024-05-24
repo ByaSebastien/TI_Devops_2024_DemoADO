@@ -12,8 +12,8 @@ namespace TI_Devops_2024_DemoADO.Interfaces
         IEnumerable<Pokemon> GetAll();
         Pokemon? GetById(int id);
         int Count();
-        int Create(Pokemon pokemon);
-        bool Update(int id, Pokemon pokemon);
+        int Create(Pokemon p);
+        bool Update(int id, Pokemon p);
         bool Delete(int id);
     }
 }
