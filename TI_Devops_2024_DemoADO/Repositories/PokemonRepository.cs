@@ -106,7 +106,20 @@ namespace TI_Devops_2024_DemoADO.Repositories
 
         public int Count()
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            
+            SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"SELECT COUNT(*) 
+                                FROM Pokemon";
+
+            conn.Open() ;
+
+            int count = (int)cmd.ExecuteScalar();
+
+            conn.Close() ;
+
+            return count;
         }
 
         public int Create(Pokemon pokemon)
