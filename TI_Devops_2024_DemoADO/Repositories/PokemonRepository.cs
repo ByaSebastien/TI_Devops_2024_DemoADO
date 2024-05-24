@@ -48,13 +48,42 @@ namespace TI_Devops_2024_DemoADO.Repositories
 
             while (reader.Read())
             {
-
+                yield return Convert(reader);
             }
+
+            conn.Close();
         }
 
         public Pokemon? GetById(int id)
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+
+            SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"select p.* , t.Name as 'Type1Name', t2.Name as 'Type2Name'
+                                from Pokemon p 
+                                    join Type t 
+                                        on p.Type1Id = t.Id 
+                                    join Type t2 
+                                        on p.Type2Id = t2.Id 
+                                where p.Id = @id";
+
+            cmd.Parameters.AddWithValue("id", id);
+
+            conn.Open();
+
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            Pokemon? pokemon = null;
+
+            if (reader.Read())
+            {
+                pokemon = Convert(reader);
+            }
+
+            conn.Close();
+
+            return pokemon;
         }
 
         public int Count()
